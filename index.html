@@ -1,1 +1,310 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>TikTok Autumn Limited VIP Member Benefits Lottery</title>
+<style>
+  :root{
+    --bg1:#0b0f1a; --bg2:#121b2e; --neon:#00e5ff; --neon2:#a855f7; --accent:#22d3ee; --gold:#ffe066; --danger:#ff6b6b;
+  }
+  *{box-sizing:border-box}
+  html,body{height:100%}
+  body{
+    margin:0; color:#e6f4ff; font-family: Inter,system-ui,Segoe UI,Roboto,Arial,sans-serif;
+    background: radial-gradient(1200px 800px at 10% 10%, rgba(168,85,247,.25), transparent 50%),
+                radial-gradient(1000px 700px at 90% 20%, rgba(34,211,238,.18), transparent 55%),
+                radial-gradient(900px 600px at 50% 110%, rgba(0,229,255,.15), transparent 60%), linear-gradient(180deg, var(--bg1), var(--bg2));
+    overflow:hidden;
+  }
+  /* animated grid */
+  .grid{
+    position:fixed; inset:0; pointer-events:none; opacity:.35;
+    background-image:
+      linear-gradient(transparent 95%, rgba(0,229,255,.35) 96%),
+      linear-gradient(90deg, transparent 95%, rgba(168,85,247,.28) 96%);
+    background-size: 28px 28px, 28px 28px;
+    transform: perspective(800px) rotateX(55deg) translateY(-20%);
+    animation: drift 18s linear infinite;
+    filter: drop-shadow(0 0 8px rgba(0,229,255,.25));
+  }
+  @keyframes drift{ to{ background-position:0 280px, 280px 0 } }
 
+  .wrap{position:relative; height:100%; display:flex; align-items:center; justify-content:center; padding:20px}
+  .card{
+    width:min(720px, 92vw); background:rgba(6,10,20,.75); backdrop-filter: blur(10px);
+    border:1px solid rgba(0,229,255,.25); border-radius:18px; padding:28px;
+    box-shadow: 0 0 0 1px rgba(168,85,247,.15), 0 12px 40px rgba(0,0,0,.45), 0 0 60px rgba(168,85,247,.25) inset;
+  }
+  .title{
+    margin:0 0 10px; font-size: clamp(20px, 4vw, 28px); line-height:1.2; text-align:center; font-weight:800;
+    background: linear-gradient(90deg,var(--neon),var(--neon2),var(--accent));
+    -webkit-background-clip:text; background-clip:text; color:transparent;
+    text-shadow: 0 0 16px rgba(0,229,255,.35);
+  }
+  .subtitle{margin:0 0 18px; text-align:center; opacity:.85; font-size:14px}
+  .prizes{
+    display:grid; gap:10px; margin:18px 0 20px;
+    grid-template-columns: 1fr;
+  }
+  .prize{
+    padding:10px 12px; border:1px dashed rgba(255,255,255,.15); border-radius:10px; background:rgba(255,255,255,.03);
+    display:flex; align-items:center; gap:10px; font-size:14px;
+  }
+  .prize .emoji{font-size:18px}
+  .gate{
+    display:grid; gap:12px; margin:14px 0 6px;
+    grid-template-columns: 1fr;
+  }
+  .sig-block{
+    background:rgba(255,255,255,.04); border:1px solid rgba(255,255,255,.12); border-radius:12px; padding:10px;
+  }
+  .sig-head{display:flex; justify-content:space-between; align-items:center; margin-bottom:8px; font-size:13px; opacity:.9}
+  .sig-pad{
+    display:block; width:100%; height:140px; background:#0e1525; border-radius:10px; border:1px solid rgba(0,229,255,.25);
+    box-shadow: inset 0 0 18px rgba(0,229,255,.1);
+    touch-action: none;
+  }
+  .sig-actions{display:flex; gap:10px; margin-top:8px}
+  .btn{
+    appearance:none; border:none; border-radius:10px; padding:12px 16px; font-weight:700; cursor:pointer;
+    color:#051019; background:linear-gradient(90deg,var(--neon),var(--accent));
+    box-shadow: 0 6px 20px rgba(0,229,255,.35), 0 0 0 1px rgba(0,229,255,.25) inset;
+    transition: transform .08s ease, filter .2s ease;
+  }
+  .btn:hover{filter:brightness(1.08)}
+  .btn:active{transform: translateY(1px)}
+  .btn.secondary{
+    background:linear-gradient(90deg,#3b82f6,#22d3ee); color:#031018;
+  }
+  .btn.ghost{
+    background:transparent; color:#cfefff; border:1px solid rgba(255,255,255,.2); box-shadow:none
+  }
+  .agree{display:flex; align-items:center; gap:8px; font-size:13px; opacity:.9}
+  .draw-row{display:flex; gap:10px; flex-wrap:wrap; margin-top:6px}
+  .draw-btn{flex:1; min-width:200px; font-size:16px}
+  .disabled{opacity:.55; cursor:not-allowed; filter:grayscale(.3)}
+  .result{
+    margin-top:14px; text-align:center; padding:16px; border-radius:14px; background:rgba(0,229,255,.07);
+    border:1px solid rgba(0,229,255,.25);
+  }
+  .result .headline{
+    font-size: clamp(18px, 3.8vw, 26px); margin:0 0 6px; color:var(--gold); font-weight:800; text-shadow:0 0 18px rgba(255,224,102,.35)
+  }
+  .result .desc{margin:0; opacity:.92; font-size:14px}
+  .spinner{
+    width:56px; height:56px; border-radius:50%;
+    border:3px solid rgba(255,255,255,.18); border-top-color: var(--neon);
+    margin:14px auto 0; animation: spin 1s linear infinite;
+  }
+  @keyframes spin{ to{ transform:rotate(360deg) } }
+
+  /* confetti */
+  .confetti{position:fixed; inset:0; pointer-events:none; overflow:hidden}
+  .confetti i{
+    position:absolute; width:8px; height:12px; background:var(--c,#fff); top:-12px; opacity:.9; transform:translateY(-100px) rotate(0);
+    animation: fall linear forwards; border-radius:2px;
+  }
+  @keyframes fall{ to{ transform: translateY(110vh) rotate(540deg)} }
+  footer{margin-top:14px; text-align:center; opacity:.7; font-size:12px}
+  a{color:var(--accent); text-decoration:none}
+</style>
+</head>
+<body>
+<div class="grid"></div>
+<div class="wrap">
+  <div class="card" id="card">
+    <h1 class="title">TikTok Autumn Limited VIP Member Benefits Lottery</h1>
+    <p class="subtitle">Sign once to unlock the draw. One attempt per device. Good luck! ✨</p>
+
+    <!-- Prize list (visible before draw only) -->
+    <div id="prizeList" class="prizes">
+      <div class="prize"><span class="emoji">🏠</span> 1️⃣ Smart Home Set – Make your home smarter and more stylish!</div>
+      <div class="prize"><span class="emoji">🇬🇧</span> 2️⃣ British Brand Fashion Accessories – Showcase iconic British designs!</div>
+      <div class="prize"><span class="emoji">🧴</span> 3️⃣ Premium Skincare Sets – Luxurious care that makes you glow!</div>
+      <div class="prize"><span class="emoji">🫖</span> 4️⃣ Classic British Tea Set – Enjoy authentic tea culture at home!</div>
+      <div class="prize"><span class="emoji">🎁</span> 5️⃣ Mystery Grand Prize – Surprise gifts to elevate your VIP status!</div>
+    </div>
+
+    <!-- Gating: signature + agree -->
+    <div class="gate" id="gate">
+      <div class="sig-block">
+        <div class="sig-head">
+          <strong>✍️ Signature</strong>
+          <span id="sigStatus">Please sign to enable the draw</span>
+        </div>
+        <canvas id="sigPad" class="sig-pad"></canvas>
+        <div class="sig-actions">
+          <button class="btn ghost" id="clearSig" type="button">Clear</button>
+          <button class="btn secondary" id="acceptSig" type="button">Confirm Signature</button>
+        </div>
+      </div>
+
+      <label class="agree">
+        <input type="checkbox" id="agreeChk" />
+        I understand this is a one-time draw on this device and agree to the event rules.
+      </label>
+
+      <div class="draw-row">
+        <button class="btn draw-btn disabled" id="drawBtn" disabled>🚀 Spin the Wheel</button>
+      </div>
+    </div>
+
+    <!-- Loading + Result -->
+    <div id="loading" style="display:none">
+      <div class="spinner" aria-label="Drawing..."></div>
+      <p style="margin:10px 0 0; opacity:.9">Computing your lucky prize…</p>
+    </div>
+
+    <div id="resultBox" class="result" style="display:none">
+      <h2 class="headline" id="prizeText">🎉 Congratulations!</h2>
+      <p class="desc" id="afterText">
+        Please contact our receptionist via <a id="tgLink" href="https://t.me/your-reception-bot" target="_blank" rel="noopener">Telegram</a>
+        and tell them what you won. 📨<br/>
+        🏆 Finish the VIP3 task to claim your prize!
+      </p>
+    </div>
+
+    <footer>© TikTok VIP Autumn Event</footer>
+  </div>
+</div>
+
+<div class="confetti" id="confetti"></div>
+
+<script>
+  // ====== Config ======
+  const TELEGRAM_URL = "https://t.me/your-reception-bot"; // <-- replace with your real Telegram link
+  const PRIZES = [
+    "Smart Home Set – Make your home smarter and more stylish!",
+    "British Brand Fashion Accessories – Showcase iconic British designs!",
+    "Premium Skincare Sets – Luxurious care that makes you glow!",
+    "Classic British Tea Set – Enjoy authentic British tea culture at home!",
+    "Mystery Grand Prize – Surprise gifts to elevate your VIP status!"
+  ];
+  const ONE_TIME_KEY = "vip_autumn_has_drawn_v1";
+
+  // ====== Elements ======
+  const sigPad = document.getElementById('sigPad');
+  const ctx = sigPad.getContext('2d');
+  const sigStatus = document.getElementById('sigStatus');
+  const clearBtn = document.getElementById('clearSig');
+  const acceptBtn = document.getElementById('acceptSig');
+  const agreeChk = document.getElementById('agreeChk');
+  const drawBtn = document.getElementById('drawBtn');
+  const prizeList = document.getElementById('prizeList');
+  const gate = document.getElementById('gate');
+  const loading = document.getElementById('loading');
+  const resultBox = document.getElementById('resultBox');
+  const prizeText = document.getElementById('prizeText');
+  const confetti = document.getElementById('confetti');
+  const tgLink = document.getElementById('tgLink');
+
+  tgLink.href = TELEGRAM_URL;
+
+  // ====== Signature Pad (hi-dpi + touch) ======
+  function resizeCanvas(){
+    const ratio = Math.max(window.devicePixelRatio || 1, 1);
+    const w = sigPad.clientWidth, h = sigPad.clientHeight;
+    sigPad.width = Math.floor(w * ratio);
+    sigPad.height = Math.floor(h * ratio);
+    ctx.scale(ratio, ratio);
+    ctx.lineCap = 'round';
+    ctx.lineJoin = 'round';
+    ctx.lineWidth = 2.2;
+    ctx.strokeStyle = '#9be8ff';
+    // draw hint baseline
+    ctx.setLineDash([6,6]); ctx.beginPath(); ctx.moveTo(12, h-24); ctx.lineTo(w-12, h-24); ctx.stroke(); ctx.setLineDash([]);
+  }
+  resizeCanvas(); window.addEventListener('resize', resizeCanvas);
+
+  let drawing = false, signed = false, last = null;
+  function pt(e){
+    if(e.touches && e.touches[0]) return {x: e.touches[0].clientX - sigPad.getBoundingClientRect().left,
+                                          y: e.touches[0].clientY - sigPad.getBoundingClientRect().top};
+    return {x: e.offsetX, y: e.offsetY};
+  }
+  function start(e){ drawing = true; last = pt(e); e.preventDefault(); }
+  function move(e){
+    if(!drawing) return;
+    const p = pt(e);
+    ctx.beginPath(); ctx.moveTo(last.x, last.y); ctx.lineTo(p.x, p.y); ctx.stroke();
+    last = p; signed = true; sigStatus.textContent = "Signature captured ✔";
+    maybeEnableDraw();
+    e.preventDefault();
+  }
+  function end(){ drawing = false; last = null; }
+
+  sigPad.addEventListener('mousedown', start);
+  sigPad.addEventListener('mousemove', move);
+  window.addEventListener('mouseup', end);
+  sigPad.addEventListener('touchstart', start, {passive:false});
+  sigPad.addEventListener('touchmove', move, {passive:false});
+  sigPad.addEventListener('touchend', end);
+
+  clearBtn.addEventListener('click', () => { resizeCanvas(); signed = false; sigStatus.textContent = "Please sign to enable the draw"; maybeEnableDraw(); });
+
+  let signatureConfirmed = false;
+  acceptBtn.addEventListener('click', () => {
+    if(!signed){
+      sigStatus.textContent = "Please sign first"; sigStatus.style.color = "#ffd166"; return;
+    }
+    signatureConfirmed = true;
+    sigStatus.textContent = "Signature confirmed ✔";
+    sigStatus.style.color = "#7dffaa";
+    maybeEnableDraw();
+  });
+
+  agreeChk.addEventListener('change', maybeEnableDraw);
+
+  function maybeEnableDraw(){
+    const locked = localStorage.getItem(ONE_TIME_KEY) === '1';
+    const ok = signatureConfirmed && agreeChk.checked && !locked;
+    drawBtn.disabled = !ok;
+    drawBtn.classList.toggle('disabled', !ok);
+  }
+
+  // Lock if already drawn
+  if(localStorage.getItem(ONE_TIME_KEY) === '1'){
+    gate.style.display = 'none';
+    prizeList.style.display = 'none';
+    resultBox.style.display = 'block';
+    prizeText.textContent = "You have already participated on this device.";
+  } else {
+    maybeEnableDraw();
+  }
+
+  // ====== Draw flow ======
+  drawBtn.addEventListener('click', () => {
+    // hide list, show spinner
+    prizeList.style.display = 'none';
+    gate.style.display = 'none';
+    loading.style.display = 'block';
+
+    // simulate draw 2.2s
+    setTimeout(() => {
+      const prize = PRIZES[Math.floor(Math.random() * PRIZES.length)];
+      loading.style.display = 'none';
+      resultBox.style.display = 'block';
+      prizeText.innerHTML = `🎉 You've won: <span style="color:var(--gold)">${prize}</span>`;
+      fireConfetti();
+      // lock one-time
+      localStorage.setItem(ONE_TIME_KEY, '1');
+    }, 2200);
+  });
+
+  // ====== Simple Confetti ======
+  function fireConfetti(){
+    const colors = ['#00e5ff','#22d3ee','#a855f7','#ffe066','#7cfff3','#ff8bd1'];
+    for(let i=0;i<120;i++){
+      const p = document.createElement('i');
+      p.style.left = Math.random()*100+'vw';
+      p.style.animationDuration = (1.5 + Math.random()*1.8)+'s';
+      p.style.animationDelay = (Math.random()*0.6)+'s';
+      p.style.setProperty('--c', colors[Math.floor(Math.random()*colors.length)]);
+      confetti.appendChild(p);
+      setTimeout(()=>p.remove(), 3200);
+    }
+  }
+</script>
+</body>
+</html>
